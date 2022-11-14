@@ -1,5 +1,5 @@
 import json
-import subprocess
+from lib import pyboard
 
 class LocalFile:
 
@@ -24,26 +24,38 @@ class LocalFile:
          return {"error":"could not access localfile"}
 
 class Pico:
+   def do(self,action):
+
+      cmds={
+         "read": ["cp",":content.json","content.json"],
+         "write":["cp","content.json",":content.json"]
+      }
+      pyb = pyboard.Pyboard('/dev/ttyACM0')
+      pyb.enter_raw_repl()
+      pyboard.filesystem_command(pyb,cmds[action])
+      pyb.exit_raw_repl()
+      pyb.close()
 
    def read(self):
       try:
-         with subprocess.Popen(["rshell","--quiet","cat","/pyboard/content.json"], 
-                              stdout=subprocess.PIPE) as proc:
-            json_in_pico=proc.stdout.read()
+         self.do("read")
+         with open ("content.json","r") as localfile:
+            json_in_pico=localfile.read()
          return json.loads(json_in_pico)
       except json.decoder.JSONDecodeError: 
          return {"error":"could not access pico"}
+      except :
+         print("os error")
+         return {"displays": [{"text": "hello amigos", "effect": "blink"}]}
 
    def write(self,data):
-      temp_file_name="/tmp/content.json"
+      temp_file_name="content.json"
       try:
          with open(temp_file_name,"w") as outfile:
-            json.dump(data,outfile)            
+            json.dump(data,outfile)
+         self.do("write")
       except:
-         print("could not write")
+         print("could not write local")
          return {"error":"could not access pico"}
 
-      with subprocess.Popen(["rshell","--quiet","cp",temp_file_name,"/pyboard"], \
-                           stdout=subprocess.PIPE,) as proc:
-         json_in_pico=proc.stdout.read()
-         print(json_in_pico)
+      

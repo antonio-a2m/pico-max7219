@@ -2,7 +2,7 @@ import sys
 from functools import partial
 from PyQt5.QtWidgets import QApplication, QWidget, QComboBox, \
                            QLabel, QPushButton, QVBoxLayout, QHBoxLayout 
-from inputData import LocalFile
+from inputData import LocalFile, Pico
 from textElement import TextElement
 from bitmapElement import BitmapElement, BitmapElementEditor
 
@@ -54,8 +54,8 @@ class MainWindow(QWidget):
       
 
       self.setLayout(vbox_lo)
-      #self.pico=Pico()
-      self.pico = LocalFile("./testconntets.json")
+      self.pico=Pico()
+      #self.pico = LocalFile("./content.json")
       self.load(self.pico.read())
 
       
