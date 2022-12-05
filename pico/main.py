@@ -8,8 +8,6 @@ cs = Pin(5, Pin.OUT)
 
 display = max7219.Matrix8x8(spi,cs,4)
 
-with open("content.json", "r") as read_file:
-    contents = json.load(read_file)
     
 
 def verticalScroll(msg):
@@ -50,13 +48,39 @@ def draw_bitmap(matrix):
     sleep(3)
 
 
-while True:
-    for msg in contents["displays"]:
-        if "text" in msg:
-            scrollFuncStr=msg["effect"]+"(\""+msg["text"]+"\")"
-            eval(scrollFuncStr)
-        elif "bitmap" in msg:
-            print("it is a bmpa")
-            draw_bitmap(msg["bitmap"])
+def display_file():
+    with open("content.json", "r") as read_file:
+        contents = json.load(read_file)
+
+    while True:
+        for msg in contents["displays"]:
+            if "text" in msg:
+                scrollFuncStr=msg["effect"]+"(\""+msg["text"]+"\")"
+                eval(scrollFuncStr)
+            elif "bitmap" in msg:
+                print("it is a bmpa")
+                draw_bitmap(msg["bitmap"])
         #scrollFunc(msg["text"])
         
+def usb_conf():
+    display.fill(0)
+    display.text("usb",0,0)
+    display.show()
+    
+    
+def connected_serial_usb():
+    #true if there is a serial connection (connected to a PC or device)
+    SIE_STATUS=const(0x50110000+0x50)
+    CONNECTED=const(1<<16)
+    SUSPENDED=const(1<<4)
+    return (machine.mem32[SIE_STATUS] & (CONNECTED | SUSPENDED))==CONNECTED
+
+#### main 
+if connected_serial_usb():
+    print("ººººººººº usb connected")
+    usb_conf()
+else:
+    print("ººººººººº not usb")
+    display_file()
+
+    
