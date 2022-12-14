@@ -1,4 +1,5 @@
 import json
+import os
 from lib import pyboard
 
 class LocalFile:
@@ -24,17 +25,24 @@ class LocalFile:
          return {"error":"could not access localfile"}
 
 class Pico:
-   def do(self,action):
+   def __init__(self):
+      self.serial_device='/dev/ttyACM0'
+      if os.name == "nt":
+         self.serial_device='COM4'
+      print("||||||||||||||||||||||win:{}".format(self.serial_device))
+      
 
+   def do(self,action):
       cmds={
          "read": ["cp",":content.json","content.json"],
          "write":["cp","content.json",":content.json"]
       }
-      pyb = pyboard.Pyboard('/dev/ttyACM0')
+      pyb = pyboard.Pyboard(self.serial_device)
       pyb.enter_raw_repl()
       pyboard.filesystem_command(pyb,cmds[action])
       pyb.exit_raw_repl()
       pyb.close()
+
 
    def read(self):
       try:
@@ -46,7 +54,7 @@ class Pico:
          return {"error":"could not access pico"}
       except :
          print("os error")
-         return {"displays": [{"text": "hello amigos", "effect": "blink"}]}
+         return {"displays": [{"text": "hello", "effect": "blink"}]}
 
    def write(self,data):
       temp_file_name="content.json"
