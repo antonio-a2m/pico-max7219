@@ -85,10 +85,20 @@ def display_file():
                 scrollFuncStr=msg["effect"]+"(\""+msg["text"]+"\")"
                 eval(scrollFuncStr)
             elif "bitmap" in msg:
-                print("it is a bmpa")
-                bitmap_vert_scroll_up(convert_vector(msg["bitmap"]))
-        #scrollFunc(msg["text"])
-        
+                bitmap_applied = convert_vector(msg["bitmap"])
+                if "scroll" in msg:
+                    if msg["scroll"] == "up":
+                        bitmap_vert_scroll_up(bitmap_applied)
+                    elif msg["scroll"] == "down":
+                        bitmap_vert_scroll_down(bitmap_applied)
+                    else:
+                        draw_line_by_line(bitmap_applied)
+                        sleep(3)
+                else:
+                    draw_line_by_line(bitmap_applied)
+                    sleep(3)
+                    
+       
 def usb_conf():
     display.fill(0)
     display.text("usb",0,0)
@@ -111,4 +121,3 @@ else:
     print("ººººººººº not usb")
     display_file()
 
-    
