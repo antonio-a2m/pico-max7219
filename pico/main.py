@@ -40,12 +40,39 @@ def blink(msg):
         display.show()
         sleep(0.1)
         
-def draw_bitmap(matrix):
+def draw_line_by_line(lines_orig):
     display.fill(0)
-    for row,col in matrix:
-        display.rect(col,row,1,1,1)
+    lines = lines_orig[0:8]
+    for i in range(len(lines)):
+        for j in range(32):
+            if lines[i][j] == 1:
+                display.pixel(j,i,1) 
     display.show()
-    sleep(3)
+    
+
+def convert_vector(orig_matrix):
+    cols = 32 
+    rows=max(orig_matrix)[0]+1
+    mtx = [[0 for i in range(cols)] for j in range(rows)]
+    for row,col in orig_matrix:
+        mtx[row][col] = 1
+
+    return mtx
+    
+def bitmap_vert_scroll_up(lines_orig, times=3):
+    lines = lines_orig * times
+    height = len(lines_orig)*times
+    for i in range(height-7):
+        draw_line_by_line(lines[i:])
+        sleep(0.1)
+        
+def bitmap_vert_scroll_down(lines_orig, times=3):
+    lines = lines_orig * times
+    height = len(lines_orig)*times
+    for i in range(height):
+        draw_line_by_line(lines[-8-i:])
+        sleep(0.1)
+
 
 
 def display_file():
@@ -59,7 +86,7 @@ def display_file():
                 eval(scrollFuncStr)
             elif "bitmap" in msg:
                 print("it is a bmpa")
-                draw_bitmap(msg["bitmap"])
+                bitmap_vert_scroll_up(convert_vector(msg["bitmap"]))
         #scrollFunc(msg["text"])
         
 def usb_conf():
@@ -77,6 +104,7 @@ def connected_serial_usb():
 
 #### main 
 if connected_serial_usb():
+#if False:
     print("ººººººººº usb connected")
     usb_conf()
 else:
