@@ -24,7 +24,7 @@ def horizontalScroll(msg):
         display.fill(0)
         display.text(msg ,x,0,1)
         display.show()
-        sleep(0.1)
+        sleep(0.01)
 
 def blink(msg):
     for bri in range (10):
@@ -64,14 +64,14 @@ def bitmap_vert_scroll_up(lines_orig, times=3):
     height = len(lines_orig)*times
     for i in range(height-7):
         draw_line_by_line(lines[i:])
-        sleep(0.1)
+        sleep(0.05)
         
 def bitmap_vert_scroll_down(lines_orig, times=3):
     lines = lines_orig * times
     height = len(lines_orig)*times
     for i in range(height):
         draw_line_by_line(lines[-8-i:])
-        sleep(0.1)
+        sleep(0.05)
 
 
 
@@ -96,7 +96,6 @@ def display_file():
                         sleep(3)
                 else:
                     draw_line_by_line(bitmap_applied)
-                    sleep(3)
                     
        
 def usb_conf():
@@ -121,3 +120,4 @@ else:
     print("ººººººººº not usb")
     display_file()
 
+    
